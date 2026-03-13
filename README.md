@@ -1,38 +1,64 @@
-# rutas-protegidas
+# ⬡ Proyecto VueAuth con Supabase
 
-This template should help get you started developing with Vue 3 in Vite.
+Este proyecto es una aplicación de Single Page (SPA) construida con **Vue 3** que implementa un sistema de autenticación real utilizando **Supabase**.
 
-## Recommended IDE Setup
+## 🌟 Funcionalidades
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Autenticación con Supabase:** Login real mediante correo y contraseña.
+- **Estado de Sesión Persistente:** La aplicación reconoce si el usuario sigue conectado al recargar la página.
+- **Navbar Dinámica:** Cambia sus opciones (Login / Dashboard / Cerrar Sesión) según el estado del usuario.
+- **Estilos Premium:** Interfaz oscura con efectos visuales modernos.
 
-## Recommended Browser Setup
+## 🛠️ Tecnologías
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- **Framework:** Vue 3 (Vite)
+- **Backend:** Supabase (Auth & PostgreSQL)
+- **Routing:** Vue Router
+- **Estilos:** CSS3 con variables y transiciones.
 
-## Customize configuration
+## 🚀 Instalación y Uso
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+### 1. Clonar y preparar
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 2. Configuración de Variables de Entorno
 
-```sh
+Crea un archivo `.env` en la raíz del proyecto y añade tus credenciales de Supabase:
+```env
+VITE_SUPABASE_URL_PROYECTO=tu_url_aqui
+VITE_SUPABASE_LLAVE_ANONIMA=tu_llave_anonima_aqui
+```
+
+### 3. Ejecución en desarrollo
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+## 💻 Configuración Recomendada
 
-```sh
-npm run build
-```
+### IDE Setup
+
+- **VS Code** + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- Desactivar la extensión **Vetur** para evitar conflictos.
+
+### Browser DevTools
+
+Se recomienda instalar las herramientas de desarrollo para una mejor depuración:
+
+- [Vue.js devtools](https://devtools.vuejs.org/)
+- Activar el **Custom Object Formatter** en la configuración de la consola del navegador.
+
+## 🏗️ Estructura del Proyecto
+
+| Archivo | Descripción |
+|---|---|
+| `src/lib/supabaseClient.js` | Configuración del cliente de Supabase. |
+| `src/composables/useAuth.js` | Lógica global de autenticación compartida. |
+| `src/views/LoginView.vue` | Interfaz de acceso con validaciones. |
+| `src/App.vue` | Estructura principal y navegación protegida. |
+
+---
+
+Desarrollado por **Alejandra Rodríguez** | Proyecto de Rutas Protegidas 2026

@@ -1,3 +1,36 @@
+<!--<script setup>
+import { onMounted } from 'vue'
+import { supabase } from './lib/supabaseClient' 
+
+onMounted(async () => {
+  console.log('--- Comprobando Conexión ---')
+  
+  // Intentamos leer la tabla perfiles
+  const { data, error } = await supabase.from('perfiles').select('*').limit(1)
+
+  if (error) {
+    console.error('❌ Error:', error.message)
+  } else {
+    console.log('✅ ¡Conexión exitosa! Datos:', data)
+  }
+})
+</script>
+
+<template>
+  <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
+    <h1>Estado de la Conexión</h1>
+    <p>Si ves este mensaje, el error de "Single file component" ya se quitó.</p>
+    <p>Ahora presiona <b>F12</b> y mira la <b>Consola</b>.</p>
+  </div>
+</template>
+
+<template>
+  <div style="text-align: center; margin-top: 50px;">
+    <h1>Estado de la Conexión</h1>
+    <p>Abre la consola del navegador (F12) para ver el resultado.</p>
+  </div>
+</template>
+
 <!-- App.vue -->
 <template>
   <div id="app">

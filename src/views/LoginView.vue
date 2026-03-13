@@ -1,29 +1,23 @@
-<!-- src/views/LoginView.vue -->
 <template>
   <div class="login-page">
-    <!-- Fondo decorativo -->
     <div class="bg-grid" aria-hidden="true"></div>
     <div class="bg-glow" aria-hidden="true"></div>
 
     <div class="login-card">
-      <!-- Encabezado -->
       <div class="card-header">
         <span class="card-icon">⬡</span>
-        <h1 class="card-title">Bienvenido</h1>
+        <h1 class="card-title">Bienvenida Alejandra</h1>
         <p class="card-subtitle">Ingresa tus credenciales para continuar</p>
       </div>
 
-      <!-- Alerta de error -->
       <Transition name="alert">
         <div v-if="errorMsg" class="alert-error" role="alert">
           <span>⚠</span> {{ errorMsg }}
         </div>
       </Transition>
 
-      <!-- Formulario -->
       <form class="login-form" @submit.prevent="handleLogin" novalidate>
 
-        <!-- Campo email -->
         <div class="field" :class="{ 'field--error': errors.email }">
           <label for="email" class="field-label">Correo electrónico</label>
           <div class="field-input-wrap">
@@ -41,7 +35,6 @@
           <span v-if="errors.email" class="field-error">{{ errors.email }}</span>
         </div>
 
-        <!-- Campo contraseña -->
         <div class="field" :class="{ 'field--error': errors.password }">
           <label for="password" class="field-label">Contraseña</label>
           <div class="field-input-wrap">
@@ -67,13 +60,6 @@
           <span v-if="errors.password" class="field-error">{{ errors.password }}</span>
         </div>
 
-        <!-- Credenciales de prueba -->
-        <div class="hint-box">
-          <span class="hint-label">Credenciales de prueba:</span>
-          <code>admin@vue.com</code> / <code>vue1234</code>
-        </div>
-
-        <!-- Botón submit -->
         <button
           type="submit"
           class="btn-submit"
@@ -92,10 +78,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
+// IMPORTANTE: Asegúrate de que la ruta a tu cliente de Supabase sea correcta
+import { supabase } from '@/lib/supabaseClient'
 
 const router = useRouter()
-const { login } = useAuth()
 
 // ── Estado del formulario ──
 const form = reactive({
@@ -112,7 +98,7 @@ const showPassword = ref(false)
 const isLoading = ref(false)
 const errorMsg = ref('')
 
-// ── Validaciones individuales ──
+// ── Validaciones ──
 function validateEmail() {
   if (!form.email) {
     errors.email = 'El correo es obligatorio.'
@@ -139,7 +125,7 @@ function isFormValid() {
   return !errors.email && !errors.password
 }
 
-// ── Login simulado ──
+// ── Login REAL con Supabase ──
 async function handleLogin() {
   errorMsg.value = ''
 
@@ -148,22 +134,26 @@ async function handleLogin() {
   isLoading.value = true
 
   try {
-    // Simulamos una llamada a API con un delay
-    await new Promise(resolve => setTimeout(resolve, 1200))
+    // Intentamos iniciar sesión en Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: form.email,
+      password: form.password,
+    })
 
-    // Credenciales de prueba
-    const FAKE_USER = { email: 'admin@vue.com', password: 'vue1234' }
-
-    if (form.email === FAKE_USER.email && form.password === FAKE_USER.password) {
-      // Login exitoso
-      login(
-        { name: 'Admin', email: form.email },
-        'fake-jwt-token-abc123'
-      )
-      await router.push('/dashboard')
+    if (error) {
+      // Manejo de errores específicos en español
+      if (error.message.includes('Invalid login credentials')) {
+        errorMsg.value = 'Correo o contraseña incorrectos.'
+      } else {
+        errorMsg.value = 'Error: ' + error.message
+      }
     } else {
-      errorMsg.value = 'Credenciales incorrectas. Intenta de nuevo.'
+      console.log('¡Éxito! Usuario:', data.user)
+      // Si todo sale bien, lo mandamos al Dashboard
+      await router.push('/dashboard')
     }
+  } catch (err) {
+    errorMsg.value = 'Ocurrió un error inesperado al conectar con el servidor.'
   } finally {
     isLoading.value = false
   }
@@ -171,7 +161,7 @@ async function handleLogin() {
 </script>
 
 <style scoped>
-/* ── PÁGINA ── */
+/* Tu CSS original se mantiene igual para conservar el diseño */
 .login-page {
   min-height: calc(100vh - 65px);
   display: flex;
@@ -182,7 +172,6 @@ async function handleLogin() {
   padding: 2rem 1rem;
 }
 
-/* Fondo decorativo */
 .bg-grid {
   position: absolute;
   inset: 0;
@@ -204,7 +193,6 @@ async function handleLogin() {
   pointer-events: none;
 }
 
-/* ── CARD ── */
 .login-card {
   position: relative;
   width: 100%;
@@ -224,7 +212,6 @@ async function handleLogin() {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ── HEADER ── */
 .card-header {
   text-align: center;
   margin-bottom: 1.75rem;
@@ -259,7 +246,6 @@ async function handleLogin() {
   margin: 0;
 }
 
-/* ── ALERTA ── */
 .alert-error {
   background: rgba(224, 112, 112, 0.1);
   border: 1px solid rgba(224, 112, 112, 0.3);
@@ -276,7 +262,6 @@ async function handleLogin() {
 .alert-enter-active, .alert-leave-active { transition: all 0.3s ease; }
 .alert-enter-from, .alert-leave-to { opacity: 0; transform: translateY(-8px); }
 
-/* ── FORMULARIO ── */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -355,31 +340,6 @@ async function handleLogin() {
 
 .field-toggle:hover { opacity: 1; }
 
-/* ── HINT BOX ── */
-.hint-box {
-  background: rgba(200, 169, 110, 0.06);
-  border: 1px dashed rgba(200, 169, 110, 0.2);
-  border-radius: 8px;
-  padding: 0.65rem 0.9rem;
-  font-size: 0.8rem;
-  color: #7a7168;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.hint-label { color: #9a938c; }
-
-code {
-  background: rgba(200, 169, 110, 0.12);
-  color: #c8a96e;
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-/* ── BOTÓN SUBMIT ── */
 .btn-submit {
   margin-top: 0.5rem;
   padding: 0.8rem;
@@ -405,7 +365,6 @@ code {
   cursor: not-allowed;
 }
 
-/* Spinner */
 .spinner {
   display: inline-block;
   width: 18px;

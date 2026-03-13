@@ -1,31 +1,45 @@
-// src/composables/useAuth.js
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { supabase } from '@/lib/supabaseClient'
 
-// Estado GLOBAL compartido (fuera del composable)
-const _user = ref(null)
-const _token = ref(localStorage.getItem('auth_token') || null)
+// Estado global reactivo
+const usuarioActual = ref(null)
 
 export function useAuth() {
-  const isAuthenticated = computed(() => !!_token.value)
-
-  const user = computed(() => _user.value)
-
-  function login(userData, token) {
-    _user.value = userData
-    _token.value = token
-    localStorage.setItem('auth_token', token)
+  
+  // Función para actualizar el estado del usuario
+  const actualizarUsuario = (user) => {
+    if (user) {
+      usuarioActual.value = {
+        name: user.email.split('@')[0], // Toma "admin" de "admin@vue.com"
+        email: user.email
+      }
+    } else {
+      usuarioActual.value = null
+    }
   }
 
-  function logout() {
-    _user.value = null
-    _token.value = null
-    localStorage.removeItem('auth_token')
+  // Escuchar cambios de sesión (Login/Logout)
+  supabase.auth.onAuthStateChange((event, session) => {
+    actualizarUsuario(session?.user || null)
+  })
+
+  // Verificar sesión inicial
+  onMounted(async () => {
+    const { data } = await supabase.auth.getSession()
+    actualizarUsuario(data.session?.user || null)
+  })
+
+  const isAuthenticated = computed(() => !!usuarioActual.value)
+  const user = computed(() => usuarioActual.value)
+
+  async function logout() {
+    await supabase.auth.signOut()
+    usuarioActual.value = null
   }
 
   return {
-    user,
     isAuthenticated,
-    login,
-    logout,
+    user,
+    logout
   }
 }
