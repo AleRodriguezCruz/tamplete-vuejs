@@ -61,4 +61,4 @@ Se recomienda instalar las herramientas de desarrollo para una mejor depuración
 
 ---
 
-Desarrollado por **Alejandra Rodríguez** | Proyecto de Rutas Protegidas 2026
+Desarrollado por **Alejandra Rodríguez de la cruz ** | Proyecto de Rutas Protegidas 2026
